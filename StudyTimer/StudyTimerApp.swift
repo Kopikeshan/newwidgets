@@ -12,7 +12,7 @@ struct StudyTimerApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("Focus Timer", id: Self.mainWindow) {
+        WindowGroup("Liby", id: Self.mainWindow) {
             SessionPanel()
                 .environmentObject(model)
         }

@@ -52,7 +52,7 @@ struct StudyTimerWidget: Widget {
         StaticConfiguration(kind: kind, provider: SessionProvider()) { entry in
             StudyTimerWidgetView(entry: entry)
         }
-        .configurationDisplayName("Focus Timer")
+        .configurationDisplayName("Liby")
         .description("Your study and break rounds, with the countdown and controls.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
@@ -198,7 +198,7 @@ struct StudyTimerWidgetView: View {
     private var large: some View {
         VStack(spacing: 9) {
             HStack {
-                Text("Focus")
+                Text("Liby")
                     .font(.system(size: 15, weight: .semibold))
                 Spacer()
                 RoundDots(

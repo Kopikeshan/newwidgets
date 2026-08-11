@@ -1,4 +1,4 @@
-# Focus Timer — a macOS study/break widget
+# Liby — a macOS study/break widget
 
 A study timer for macOS built to the Claude Design handoff (`Study Timer Widget.dc.html`):
 set how long you study, how long you break, and how many rounds. It chimes and
@@ -57,6 +57,17 @@ Everything from the design, at the sizes macOS offers:
 Light and dark are both handled — the design's two palettes live in
 `Shared/Palette.swift`, picked by `\.colorScheme`.
 
+## A note on names
+
+The app shows as **Liby** everywhere you see it: the menu bar, the window title,
+the widget gallery, and as the sender on notifications.
+
+Internally the targets, the folders, the `.xcodeproj` and the bundle identifier
+are still `StudyTimer` / `com.newwidgets.studytimer`. That is deliberate — the
+bundle identifier is what the App Group container and the notification
+authorisation are keyed to, so renaming it would orphan a working setup and mean
+re-provisioning. None of it is visible to anyone using the app.
+
 ## Setup
 
 Requires **macOS 14 (Sonoma) or later** and **Xcode 15 or later**. Sonoma is the
@@ -72,7 +83,7 @@ floor because the widget's buttons use interactive widgets (`Button(intent:)`).
    `Shared/AppGroup.swift` and both `.entitlements` files.
 4. **Run** (⌘R) and allow notifications.
 5. **Add the widgets.** Right-click the desktop → *Edit Widgets*, search for
-   **Focus Timer**, drag out the size you want.
+   **Liby**, drag out the size you want.
 
 The popover shows an orange warning if the App Group isn't wired up — that's the
 one misconfiguration that leaves the widget silently ignoring your session.
@@ -117,8 +128,9 @@ Things you might want to change:
 
 ## If the project file gives you trouble
 
-The Xcode project was written by hand and **has not been compiled** — that needs
-a Mac. If it doesn't open cleanly, the sources are the real deliverable:
+The Xcode project was written by hand rather than generated. It builds and runs —
+verified on macOS 27 beta with Xcode 27 — but if a future edit corrupts it, the
+sources are the real deliverable and can be rehosted in a fresh project:
 
 1. Xcode → *New Project* → **macOS / App**, named `StudyTimer`, SwiftUI.
 2. *File → New → Target* → **Widget Extension**, named `StudyTimerWidget`.
