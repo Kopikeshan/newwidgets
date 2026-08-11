@@ -207,13 +207,22 @@ struct SessionPanel: View {
         }
     }
 
+    /// Shown only when the shared container didn't resolve. The timer itself
+    /// still works — it falls back to this process's own defaults — but the
+    /// widget is reading a different box until this is fixed.
     private var groupWarning: some View {
-        Label(
-            "The widget can't see this session yet — turn on App Groups for both targets (see README).",
-            systemImage: "exclamationmark.triangle.fill"
-        )
+        VStack(alignment: .leading, spacing: 4) {
+            Label(
+                "The widget can't see this session yet — App Groups isn't active for both targets.",
+                systemImage: "exclamationmark.triangle.fill"
+            )
+            .foregroundStyle(.orange)
+
+            Text(AppGroup.diagnostic)
+                .foregroundStyle(.primary.opacity(0.45))
+                .textSelection(.enabled)
+        }
         .font(.caption)
-        .foregroundStyle(.orange)
         .fixedSize(horizontal: false, vertical: true)
     }
 }
