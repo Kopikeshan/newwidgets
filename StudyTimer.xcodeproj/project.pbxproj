@@ -237,12 +237,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
-		CC0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
-		DD0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
-		DD0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
-		DD0000000000000000000011 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000019 /* StatsWidget.swift */; };
-		CC0000000000000000000008 /* Assets.xcassets in Resources */,
+				CC0000000000000000000008 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
