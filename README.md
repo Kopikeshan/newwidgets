@@ -102,6 +102,40 @@ floor because the widget's buttons use interactive widgets (`Button(intent:)`).
 The popover shows an orange warning if the App Group isn't wired up — that's the
 one misconfiguration that leaves the widget silently ignoring your session.
 
+## Using it
+
+The app lives in the menu bar. Click the icon to open the panel.
+
+1. **Pick a plan.** A preset (45/15, 25/5, 50/10, 90/20), or set study, break and
+   rounds with the -/+ steppers. Presets reset the session; the steppers don't.
+2. **Press Start.** The menu bar shows a depleting ring and the countdown.
+   Space bar starts and pauses while the panel or window has focus.
+3. **When a phase ends** you get a chime and a notification, and the widget
+   flips to a full-bleed card. Nothing advances on its own — press *Start break*
+   (or *Start focus*) when you're ready, from the widget, the panel or the menu.
+4. **After the last study round** the card reads *All N rounds done*. *New
+   session* starts over.
+
+*Skip* ends the current phase early and queues the next one. *Reset* clears the
+session. Time studied and your day streak are in the panel's footer and on the
+"Study Today" widget; the streak survives one missed night, not two.
+
+## Running it without Xcode
+
+```
+./Scripts/install.sh
+```
+
+Builds Release and installs `/Applications/Liby.app`, so it runs like any other
+app. Re-run it after pulling changes.
+
+To have it start with your Mac: System Settings -> General -> Login Items ->
+**+** -> Liby.
+
+**A signing caveat.** A free Apple ID signs apps for 7 days, after which the
+installed copy stops launching and you re-run the script. A paid Developer
+Program membership lasts a year.
+
 ## Where things live
 
 ```
