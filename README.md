@@ -68,6 +68,20 @@ bundle identifier is what the App Group container and the notification
 authorisation are keyed to, so renaming it would orphan a working setup and mean
 re-provisioning. None of it is visible to anyone using the app.
 
+## The icon
+
+`Branding/make_icon.py` draws the mark and writes every size the asset catalog
+needs. The wordmark is deliberately left off: an app icon is seen at 16-128px,
+where lettering turns to mush, and the name is always shown beside it anyway.
+
+```
+python3 Branding/make_icon.py                    # redraw from the script
+python3 Branding/make_icon.py path/to/1024.png   # or drop in a supplied image
+```
+
+Either way it lands on the standard macOS plate — 824/1024 with a 185 corner
+radius — and refreshes `StudyTimer/Assets.xcassets/AppIcon.appiconset`.
+
 ## Setup
 
 Requires **macOS 14 (Sonoma) or later** and **Xcode 15 or later**. Sonoma is the
