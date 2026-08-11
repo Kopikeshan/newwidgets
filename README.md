@@ -1,120 +1,129 @@
-# Study Timer — a macOS study/break widget
+# Focus Timer — a macOS study/break widget
 
-A Pomodoro-style timer for macOS: set how long you study, how long you break, and
-how many rounds. It chimes and posts a notification at every changeover, and the
-widget on your desktop or in Notification Center shows the live countdown with
-Start / Pause / Skip / Reset buttons.
+A study timer for macOS built to the Claude Design handoff (`Study Timer Widget.dc.html`):
+set how long you study, how long you break, and how many rounds. It chimes and
+posts a notification at every changeover, tracks how much you've studied today,
+and keeps a day streak.
 
 ```
-Round 1  ████████░░░░░░  Studying   12:43   →  break  →  Round 2 …
+Round 2 of 3   ◍ 24:18  STUDY   ●●○     [ Pause ] [ Skip ] [ ↺ ]
 ```
+
+## The one behaviour worth knowing
+
+**Phases don't roll on by themselves.** When study hits zero the timer stops,
+chimes, and the widget flips to a full-bleed card — *FOCUS COMPLETE / Break /
+Start break* — and waits for you. Same on the way back out of a break. This is
+deliberate in the design, and it's why the takeover states exist.
+
+One consequence: only one alert can be scheduled at a time. Everything past the
+current phase depends on when you press Start, so the next notification is
+scheduled at that moment rather than up front.
 
 ## How it's put together, and why
 
-A widget on macOS **cannot run a timer, play a sound, or wake itself up.** Widgets
-are snapshots the system redraws when it feels like it; they get no background
-execution. So the work is split in two:
+A widget on macOS **cannot run a timer, play a sound, or wake itself up.**
+Widgets are snapshots the system redraws when it feels like it; they get no
+background execution. So the work is split:
 
 | Piece | What it does |
 | --- | --- |
 | **StudyTimer** (the app) | Owns the session, plays the chime, asks for notification permission. Lives in the menu bar with a live countdown. |
-| **StudyTimerWidgetExtension** (the widget) | Draws the session and offers buttons. Holds no state of its own. |
+| **StudyTimerWidgetExtension** | Draws the session and offers buttons. Holds no state of its own. |
 | **App Group container** | The shared box both of them read and write. |
 
-Two details make it accurate without anything running:
+The state stores an end *date*, not a remaining count. Nothing ticks. Every
+reader compares `phaseEnd` against the clock, so a widget redrawn after your Mac
+slept for three hours still shows the right thing — `resolved(at:)` brings the
+stored state up to now.
 
-- **The state stores an end *date*, not a remaining count.** Nothing ticks. Any
-  reader compares `phaseEnd` with the clock, so a widget redrawn after your Mac
-  slept for three hours still shows the right phase. `SessionState.resolved(at:)`
-  fast-forwards over every boundary that has already gone by.
-- **The alerts are all scheduled up front.** Once a session starts, every
-  changeover is known, so `AlertScheduler` posts a local notification for each
-  one. They fire even if the widget extension has been torn down.
+The widget's digits tick via `Text(timerInterval:)`, which WidgetKit animates
+itself. The ring can't do that — it only moves when a new entry renders — so a
+running phase emits one timeline entry a minute plus one at the exact end.
 
-The widget's countdown uses `Text(timerInterval:)`, which WidgetKit animates
-itself — no timeline refresh budget is spent making the digits move. The timeline
-only carries one entry per phase change, so the label and colour flip on time.
+## What's in the widget family
+
+Everything from the design, at the sizes macOS offers:
+
+- **Small** — the timer face. The whole widget is the start/pause button.
+- **Small (Study Today)** — a second widget: time studied today and your streak.
+- **Medium** — ring, round dots, plan, stats, and Start / Skip / Reset. Flips to
+  the green *Break* / blue *Back to focus* / dark *All rounds done* takeovers.
+- **Large** — adds the session timeline: study and break blocks filling left to
+  right as you work through them.
+- **Menu bar popover** — presets (45/15, 25/5, 50/10, 90/20), steppers for study,
+  break and rounds, the chime toggle with a Test button, and today's totals.
+
+Light and dark are both handled — the design's two palettes live in
+`Shared/Palette.swift`, picked by `\.colorScheme`.
 
 ## Setup
 
 Requires **macOS 14 (Sonoma) or later** and **Xcode 15 or later**. Sonoma is the
-floor because the widget's buttons use interactive widgets (`Button(intent:)`),
-and because it's the release that let widgets sit on the desktop.
+floor because the widget's buttons use interactive widgets (`Button(intent:)`).
 
 1. **Open** `StudyTimer.xcodeproj`.
-2. **Set your team.** Select the project → target **StudyTimer** → *Signing &
-   Capabilities* → pick your team under *Signing*. Repeat for the
-   **StudyTimerWidgetExtension** target. A free Apple ID works fine.
-3. **Confirm the App Group.** Both targets ship with an *App Groups* entitlement
-   for `group.newwidgets.studytimer`. Xcode may want you to click the refresh
-   arrow next to it once so it registers the group with your team. If you'd
-   rather use a different identifier, change it in three places:
-   `Shared/AppGroup.swift`, `StudyTimer/StudyTimer.entitlements`, and
-   `StudyTimerWidget/StudyTimerWidget.entitlements`.
-4. **Run** the StudyTimer scheme (⌘R). Allow notifications when asked — that's
-   what makes the alert appear when a phase ends.
-5. **Add the widget.** Right-click the desktop → *Edit Widgets* (or click the
-   date in the menu bar → *Edit Widgets*), search for **Study Timer**, and drag
-   the small or medium size where you want it.
+2. **Set your team.** Project → target **StudyTimer** → *Signing & Capabilities*
+   → pick your team. Repeat for **StudyTimerWidgetExtension**. A free Apple ID
+   works.
+3. **Confirm the App Group.** Both targets carry an *App Groups* entitlement for
+   `group.newwidgets.studytimer`. Xcode may want the refresh arrow clicked once
+   so it registers with your team. To use a different identifier, change it in
+   `Shared/AppGroup.swift` and both `.entitlements` files.
+4. **Run** (⌘R) and allow notifications.
+5. **Add the widgets.** Right-click the desktop → *Edit Widgets*, search for
+   **Focus Timer**, drag out the size you want.
 
-The app window shows an orange warning if the App Group isn't wired up — that's
-the one misconfiguration that makes the widget silently ignore your session.
-
-For the widget to keep working, the app needs to have been launched at least
-once, and should stay running in the menu bar for the in-app chime. The
-notification alerts are scheduled with the system, so they arrive regardless.
-
-## Using it
-
-- **In the app:** set study minutes, break minutes and rounds, then Start.
-  Space bar starts and pauses.
-- **In the menu bar:** live countdown, plus Start / Skip / Reset.
-- **On the widget:** the same three buttons. Presses go through the same code
-  path as the app's, so the two never disagree.
-
-Settings are locked while a session runs — stop or reset to change them.
-
-A session is `rounds × (study + break)`, ending after the last break. With the
-defaults that's 4 × (25 + 5) = 2 hours, 100 minutes of it studying.
+The popover shows an orange warning if the App Group isn't wired up — that's the
+one misconfiguration that leaves the widget silently ignoring your session.
 
 ## Where things live
 
 ```
 Shared/                       # compiled into both targets
-  AppGroup.swift              # the shared-container identifier, in one place
-  StudySession.swift          # the phase machine — settings, state, transitions
+  StudySession.swift          # the phase machine, stats, and every label
   SessionStore.swift          # load / save / mutate the one shared session
-  AlertScheduler.swift        # a notification per upcoming phase change
+  AlertScheduler.swift        # the notification for the running phase
+  Palette.swift               # the design's light and dark colours
+  SessionViews.swift          # ring, round dots, timeline bar
+  AppGroup.swift              # the shared-container identifier, in one place
 StudyTimer/                   # the app
-  StudyTimerApp.swift         # window + MenuBarExtra
-  ContentView.swift           # dial, controls, settings
+  StudyTimerApp.swift         # window + menu bar chip
+  SessionPanel.swift          # the popover (design 1d)
   SessionModel.swift          # 1 Hz tick for the live UI, plays the chime
 StudyTimerWidget/             # the widget extension
-  StudyTimerWidget.swift      # timeline provider + small/medium layouts
-  WidgetIntents.swift         # the Start / Skip / Reset buttons
-  StudyTimerWidgetBundle.swift
+  StudyTimerWidget.swift      # timeline, small/medium/large, takeovers
+  StatsWidget.swift           # the "Study Today" small widget
+  WidgetIntents.swift         # Start / Skip / Reset
 ```
 
 Things you might want to change:
 
-- **Sounds:** `SessionModel.chime(for:)` — any name from `/System/Library/Sounds`.
-- **Alert wording:** `AlertScheduler.message(for:settings:)`.
-- **A long break every N rounds:** add the rule to `SessionState.advance()`; the
-  widget, the timeline and the alerts all derive from it and will follow.
-- **Widget sizes:** `supportedFamilies` in `StudyTimerWidget`.
+- **Sounds:** `SessionModel.chime(afterStudy:)` — any name from
+  `/System/Library/Sounds`. The prototype synthesised a rising pair of notes into
+  a break and a falling pair out of one; system sounds are the nearest match.
+- **Alert wording:** `AlertScheduler.body(for:)`.
+- **Presets:** `StudySettings.presets`.
+- **Auto-advance instead of waiting:** call `toggle` from `finishPhase()` — but
+  the takeover cards become unreachable, so drop them too.
+
+## Two deviations from the prototype, and why
+
+- **The notification has no title line**, only a body sentence. That's what the
+  design's banner shows, and it's what macOS renders for a body-only alert.
+- **The menu bar ring renders monochrome.** macOS templates menu bar items, so
+  the phase colour is lost there. This matches system convention and is the only
+  place the design's colour doesn't survive.
 
 ## If the project file gives you trouble
 
-The Xcode project here was written by hand rather than generated by Xcode, and it
-has not been compiled (that needs a Mac). If it doesn't open cleanly, the sources
-are the real deliverable and you can rehost them in a fresh project in a few
-minutes:
+The Xcode project was written by hand and **has not been compiled** — that needs
+a Mac. If it doesn't open cleanly, the sources are the real deliverable:
 
 1. Xcode → *New Project* → **macOS / App**, named `StudyTimer`, SwiftUI.
 2. *File → New → Target* → **Widget Extension**, named `StudyTimerWidget`.
-   Uncheck *Include Live Activity*, uncheck *Include Configuration App Intent*.
-3. Delete the stub files Xcode made and drag in `Shared/`, `StudyTimer/` and
-   `StudyTimerWidget/` from this repo.
-4. Set target membership so everything under `Shared/` belongs to **both** targets
+   Uncheck *Include Live Activity* and *Include Configuration App Intent*.
+3. Delete the stubs and drag in `Shared/`, `StudyTimer/`, `StudyTimerWidget/`.
+4. Everything under `Shared/` needs membership in **both** targets
    (File Inspector → *Target Membership*).
-5. Add the *App Groups* capability to both targets with the same group ID.
+5. Add *App Groups* to both targets with the same group ID.

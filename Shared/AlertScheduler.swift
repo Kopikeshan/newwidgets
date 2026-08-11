@@ -1,14 +1,13 @@
 import Foundation
 import UserNotifications
 
-/// Schedules a local notification for every phase change still ahead.
+/// Schedules the alert for the phase that is running.
 ///
-/// This is what actually alerts you. Because the whole session is deterministic
-/// once it starts, all of the alerts can be posted up front — they still fire
-/// while the app is in the background, and they survive the widget extension
-/// being torn down between button presses.
+/// Only ever one: because a finished phase waits to be started rather than
+/// rolling on, nothing past the current phase has a known time yet. The next
+/// alert is scheduled when you press Start.
 enum AlertScheduler {
-    private static let prefix = "study.boundary."
+    private static let identifier = "study.phase-end"
 
     static func requestAuthorization() {
         UNUserNotificationCenter.current()
@@ -17,63 +16,45 @@ enum AlertScheduler {
 
     static func reschedule(for state: SessionState, now: Date = Date()) {
         let center = UNUserNotificationCenter.current()
-        center.getPendingNotificationRequests { pending in
-            let ours = pending.map(\.identifier).filter { $0.hasPrefix(prefix) }
-            center.removePendingNotificationRequests(withIdentifiers: ours)
+        center.removePendingNotificationRequests(withIdentifiers: [identifier])
 
-            // Local notifications cap out at 64 pending; a session is far
-            // smaller than that, but stay well clear anyway.
-            for (index, boundary) in state.upcomingBoundaries(from: now).prefix(32).enumerated() {
-                let delay = boundary.date.timeIntervalSince(now)
-                guard delay > 0.5 else { continue }
+        guard state.isCounting, let end = state.phaseEnd else { return }
+        let delay = end.timeIntervalSince(now)
+        guard delay > 0.5 else { return }
 
-                let content = UNMutableNotificationContent()
-                let text = message(for: boundary, settings: state.settings)
-                content.title = text.title
-                content.body = text.body
-                content.sound = state.settings.soundEnabled ? .default : nil
+        let content = UNMutableNotificationContent()
+        // The design's banner shows the app name and a single sentence, with no
+        // separate title line — which is what an empty title renders as.
+        content.body = body(for: state)
+        content.sound = state.settings.soundEnabled ? .default : nil
 
-                let request = UNNotificationRequest(
-                    identifier: "\(prefix)\(index)",
-                    content: content,
-                    trigger: UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
-                )
-                center.add(request)
-            }
-        }
+        center.add(UNNotificationRequest(
+            identifier: identifier,
+            content: content,
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
+        ))
     }
 
-    static func cancelAll() {
-        let center = UNUserNotificationCenter.current()
-        center.getPendingNotificationRequests { pending in
-            let ours = pending.map(\.identifier).filter { $0.hasPrefix(prefix) }
-            center.removePendingNotificationRequests(withIdentifiers: ours)
-        }
+    static func cancel() {
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [identifier])
     }
 
-    private static func message(
-        for boundary: SessionState.Boundary,
-        settings: StudySettings
-    ) -> (title: String, body: String) {
-        switch (boundary.from, boundary.state.phase) {
-        case (.study, _):
-            return (
-                "Break time",
-                "Round \(boundary.round) of \(settings.rounds) done. Take \(settings.breakMinutes) min."
-            )
-        case (.rest, .study):
-            return (
-                "Back to it",
-                "Round \(boundary.state.round) of \(settings.rounds) — \(settings.studyMinutes) min of study."
-            )
-        case (.rest, _):
-            let total = settings.rounds * settings.studyMinutes
-            return (
-                "Session complete",
-                "\(settings.rounds) rounds done — \(total) minutes of study. Nice."
-            )
-        default:
-            return ("Study timer", "Phase finished.")
+    /// What the phase now running will say when it ends.
+    private static func body(for state: SessionState) -> String {
+        let settings = state.settings
+        switch state.phase {
+        case .study where state.round >= settings.rounds:
+            return "All \(settings.rounds) rounds done. Nice work."
+        case .study:
+            let left = settings.rounds - state.round
+            let rounds = left == 1 ? "1 round left" : "\(left) rounds left"
+            return "\(settings.studyMinutes) min of study done. \(settings.breakMinutes) min break — \(rounds)."
+        case .rest:
+            let next = min(state.round + 1, settings.rounds)
+            return "Break over. Round \(next) of \(settings.rounds) — \(settings.studyMinutes) min of study."
+        case .idle, .done:
+            return "Phase finished."
         }
     }
 }

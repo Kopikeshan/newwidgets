@@ -12,44 +12,47 @@ struct StudyTimerApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("Study Timer", id: Self.mainWindow) {
-            ContentView()
+        WindowGroup("Focus Timer", id: Self.mainWindow) {
+            SessionPanel()
                 .environmentObject(model)
         }
         .windowResizability(.contentSize)
 
-        // Keeps a live countdown in the menu bar, and keeps the app running so
-        // the chime still plays when the window is closed.
-        MenuBarExtra(model.menuBarTitle, systemImage: model.state.phase.symbol) {
-            MenuBarContent().environmentObject(model)
+        // The menu bar is the app's real home: a live countdown you can glance
+        // at, and the popover where the session gets set up.
+        MenuBarExtra {
+            SessionPanel()
+                .environmentObject(model)
+        } label: {
+            MenuBarChip()
+                .environmentObject(model)
         }
+        .menuBarExtraStyle(.window)
     }
 }
 
-private struct MenuBarContent: View {
+/// Design 1d's menu bar chip — a small depleting ring beside the countdown.
+private struct MenuBarChip: View {
     @EnvironmentObject private var model: SessionModel
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
-        Text(model.summary)
+        if model.state.phase == .idle || model.state.phase == .done {
+            Image(systemName: model.state.phase == .done ? "checkmark.circle" : "timer")
+        } else {
+            HStack(spacing: 5) {
+                TimerRing(
+                    fraction: model.ringFraction,
+                    tint: .primary,
+                    track: .primary.opacity(0.35),
+                    lineWidth: 2.2,
+                    inset: 1.6
+                )
+                .frame(width: 13, height: 13)
 
-        Divider()
-
-        Button(model.state.isPaused || !model.state.phase.isRunning ? "Start" : "Pause") {
-            model.startOrPause()
+                Text(model.timeText)
+                    .font(.system(size: 11.5, weight: .medium))
+                    .monospacedDigit()
+            }
         }
-        Button("Skip phase") { model.skip() }
-            .disabled(!model.state.phase.isRunning)
-        Button("Reset") { model.reset() }
-            .disabled(model.state.phase == .idle)
-
-        Divider()
-
-        Button("Open Study Timer") {
-            NSApp.activate(ignoringOtherApps: true)
-            openWindow(id: StudyTimerApp.mainWindow)
-        }
-        Button("Quit") { NSApp.terminate(nil) }
-            .keyboardShortcut("q")
     }
 }

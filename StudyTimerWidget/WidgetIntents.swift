@@ -1,40 +1,42 @@
 import AppIntents
 import WidgetKit
 
-/// The widget's buttons. These run in the extension, mutate the shared session,
-/// and re-post the alerts — the same code path the app's buttons use, so the
-/// two stay in step.
+/// The widget's buttons. They run in the extension, mutate the one shared
+/// session, and reschedule the alert — the same path the app's buttons take.
 
-struct StartPauseIntent: AppIntent {
+struct ToggleIntent: AppIntent {
     static var title: LocalizedStringResource = "Start or Pause"
-    static var description = IntentDescription("Starts the session, or pauses and resumes it.")
+    static var description = IntentDescription("Starts the queued phase, or pauses and resumes the running one.")
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult {
-        SessionStore.shared.mutate { $0.togglePause() }
+        let now = Date()
+        SessionStore.shared.mutate(at: now) { $0.toggle(at: now) }
         return .result()
     }
 }
 
 struct SkipPhaseIntent: AppIntent {
     static var title: LocalizedStringResource = "Skip Phase"
-    static var description = IntentDescription("Jumps straight to the next study or break phase.")
+    static var description = IntentDescription("Ends the current phase early and queues the next one.")
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult {
-        SessionStore.shared.mutate { $0.skip() }
+        let now = Date()
+        SessionStore.shared.mutate(at: now) { $0.skip(at: now) }
         return .result()
     }
 }
 
 struct ResetSessionIntent: AppIntent {
     static var title: LocalizedStringResource = "Reset Session"
-    static var description = IntentDescription("Clears the session and cancels its alerts.")
+    static var description = IntentDescription("Clears the session and cancels its alert.")
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult {
-        SessionStore.shared.mutate { $0.reset() }
-        AlertScheduler.cancelAll()
+        let now = Date()
+        SessionStore.shared.mutate(at: now) { $0.reset(at: now) }
+        AlertScheduler.cancel()
         return .result()
     }
 }

@@ -5,5 +5,6 @@ import WidgetKit
 struct StudyTimerWidgetBundle: WidgetBundle {
     var body: some Widget {
         StudyTimerWidget()
+        StudyStatsWidget()
     }
 }

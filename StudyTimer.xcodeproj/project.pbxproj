@@ -8,12 +8,17 @@
 
 /* Begin PBXBuildFile section */
 		CC0000000000000000000001 /* StudyTimerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000001 /* StudyTimerApp.swift */; };
-		CC0000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000002 /* ContentView.swift */; };
+		CC0000000000000000000002 /* SessionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000002 /* SessionPanel.swift */; };
 		CC0000000000000000000003 /* SessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000003 /* SessionModel.swift */; };
 		CC0000000000000000000004 /* AppGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000013 /* AppGroup.swift */; };
 		CC0000000000000000000005 /* StudySession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000014 /* StudySession.swift */; };
 		CC0000000000000000000006 /* SessionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000015 /* SessionStore.swift */; };
 		CC0000000000000000000007 /* AlertScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000016 /* AlertScheduler.swift */; };
+		CC0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
+		CC0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
+		DD0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
+		DD0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
+		DD0000000000000000000011 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000019 /* StatsWidget.swift */; };
 		CC0000000000000000000008 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000006 /* Assets.xcassets */; };
 		DD0000000000000000000001 /* StudyTimerWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000007 /* StudyTimerWidgetBundle.swift */; };
 		DD0000000000000000000002 /* StudyTimerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000008 /* StudyTimerWidget.swift */; };
@@ -54,7 +59,7 @@
 		AA0000000000000000000009 /* StudyTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StudyTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000000000000000000010 /* StudyTimerWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StudyTimerWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BB0000000000000000000001 /* StudyTimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyTimerApp.swift; sourceTree = "<group>"; };
-		BB0000000000000000000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BB0000000000000000000002 /* SessionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionPanel.swift; sourceTree = "<group>"; };
 		BB0000000000000000000003 /* SessionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionModel.swift; sourceTree = "<group>"; };
 		BB0000000000000000000004 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BB0000000000000000000005 /* StudyTimer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StudyTimer.entitlements; sourceTree = "<group>"; };
@@ -69,6 +74,9 @@
 		BB0000000000000000000014 /* StudySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudySession.swift; sourceTree = "<group>"; };
 		BB0000000000000000000015 /* SessionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionStore.swift; sourceTree = "<group>"; };
 		BB0000000000000000000016 /* AlertScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertScheduler.swift; sourceTree = "<group>"; };
+		BB0000000000000000000017 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		BB0000000000000000000018 /* SessionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionViews.swift; sourceTree = "<group>"; };
+		BB0000000000000000000019 /* StatsWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWidget.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,7 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				BB0000000000000000000001 /* StudyTimerApp.swift */,
-				BB0000000000000000000002 /* ContentView.swift */,
+				BB0000000000000000000002 /* SessionPanel.swift */,
 				BB0000000000000000000003 /* SessionModel.swift */,
 				BB0000000000000000000006 /* Assets.xcassets */,
 				BB0000000000000000000004 /* Info.plist */,
@@ -127,6 +135,7 @@
 				BB0000000000000000000007 /* StudyTimerWidgetBundle.swift */,
 				BB0000000000000000000008 /* StudyTimerWidget.swift */,
 				BB0000000000000000000009 /* WidgetIntents.swift */,
+				BB0000000000000000000019 /* StatsWidget.swift */,
 				BB0000000000000000000012 /* Assets.xcassets */,
 				BB0000000000000000000010 /* Info.plist */,
 				BB0000000000000000000011 /* StudyTimerWidget.entitlements */,
@@ -141,6 +150,8 @@
 				BB0000000000000000000014 /* StudySession.swift */,
 				BB0000000000000000000015 /* SessionStore.swift */,
 				BB0000000000000000000016 /* AlertScheduler.swift */,
+				BB0000000000000000000017 /* Palette.swift */,
+				BB0000000000000000000018 /* SessionViews.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -226,7 +237,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC0000000000000000000008 /* Assets.xcassets in Resources */,
+				CC0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
+		CC0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
+		DD0000000000000000000009 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000017 /* Palette.swift */; };
+		DD0000000000000000000010 /* SessionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000018 /* SessionViews.swift */; };
+		DD0000000000000000000011 /* StatsWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB0000000000000000000019 /* StatsWidget.swift */; };
+		CC0000000000000000000008 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,13 +261,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CC0000000000000000000002 /* ContentView.swift in Sources */,
+				CC0000000000000000000002 /* SessionPanel.swift in Sources */,
 				CC0000000000000000000003 /* SessionModel.swift in Sources */,
 				CC0000000000000000000001 /* StudyTimerApp.swift in Sources */,
 				CC0000000000000000000004 /* AppGroup.swift in Sources */,
 				CC0000000000000000000005 /* StudySession.swift in Sources */,
 				CC0000000000000000000006 /* SessionStore.swift in Sources */,
 				CC0000000000000000000007 /* AlertScheduler.swift in Sources */,
+				CC0000000000000000000009 /* Palette.swift in Sources */,
+				CC0000000000000000000010 /* SessionViews.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +284,9 @@
 				DD0000000000000000000005 /* StudySession.swift in Sources */,
 				DD0000000000000000000006 /* SessionStore.swift in Sources */,
 				DD0000000000000000000007 /* AlertScheduler.swift in Sources */,
+				DD0000000000000000000009 /* Palette.swift in Sources */,
+				DD0000000000000000000010 /* SessionViews.swift in Sources */,
+				DD0000000000000000000011 /* StatsWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
